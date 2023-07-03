@@ -4,6 +4,8 @@
 __all__ = [
         "Die",
         "DiceBag",
+        "roll",
+        "roll_to_str",
         ]
 
 
@@ -97,6 +99,9 @@ class DiceBag:
 
     def roll(self) -> int:
         return sum(die.roll() for die in self._bag)
+
+    def roll_to_str(self) -> str:
+        return f"Rolled {self}    = {self.roll()}"
 
 
 ######################
@@ -295,6 +300,14 @@ class Parser:
                 to_return.add_die(self.die(), subtracted=True)
 
         return to_return
+
+
+def roll(formula: str):
+    return DiceBag.from_str(formula).roll()
+
+
+def roll_to_str(formula: str):
+    return DiceBag.from_str(formula).roll_to_str()
 
 
 def main():
