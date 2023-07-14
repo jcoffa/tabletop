@@ -70,6 +70,9 @@ class Die:
     def roll(self) -> int:
         return sum(random.randint(1, self.sides) for _ in range(self.num_dice)) + self.modifier
 
+    def roll_to_str(self) -> str:
+        return f"Rolled {self}    = {self.roll()}"
+
 
 @dataclass(frozen=True, slots=True)
 class DiceBagItem:
@@ -302,7 +305,7 @@ class Parser:
                 token = self.current_token
                 self.eat(TokenType.INTEGER)
                 assert type(token.value) is int
-                modifier += -token.value
+                modifier -= token.value
 
         return Die(sides, num_dice, modifier)
 
