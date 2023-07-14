@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
 
-__all__ = [
-        "Die",
-        "DiceBag",
-        "roll",
-        "roll_to_str",
-        ]
-
-
 """
+Library for creating and rolling virtual dice.
+
+One of the ways that dice can be constructed is by using a "dice formula" which
+follows common nomenclature for defining how dice are structured in various TTRPGs.
 What does a valid dice formula look like?
 
     d6                  -> 1d6+0
@@ -24,16 +20,31 @@ What does a valid dice formula look like?
     d8+1-2+3+d4         -> (1d8+2) + (1d4+0)
     2d10-1+7-2d4+1-1+2  -> (2d10+6) - (2d4+2)
 
+(NOTE: whitespace is allowed anywhere except within a number
+ i.e. no "1 2 d 1 0 + 2", must be at least "12 d 10 + 2" or similar)
+
+
+
+Dice Formula Grammar
+====================
 
 dice    : die ((PLUS|MINUS) die)*
 die     : integer? DELIM integer ((PLUS|MINUS) integer)*
 integer : DIGIT+
 
-DIGIT   : [0-9]+
+DIGIT   : [0-9]
 DELIM   : "d"
 PLUS    : "+"
 MINUS   : "-"
 """
+
+
+__all__ = [
+        "Die",
+        "DiceBag",
+        "roll",
+        "roll_to_str",
+        ]
 
 
 from dataclasses import dataclass, field
@@ -92,6 +103,24 @@ class DiceBag:
 
     @staticmethod
     def from_str(formula: str) -> 'DiceBag':
+        """Construct a DiceBag from a dice formula.
+
+        Generally, a dice formula is 1 or more dice
+        (in the nomenclature [num]d<sides>[ +- <modifier>])
+        that are added and subtracted from each other.
+
+        Examples of dice formulas:
+            d6          -> 1d6+0
+            1d6         -> 1d6+0
+            2d4+2       -> 2d4+2
+            d10-3       -> 1d10-3
+            d20+5-d4    -> (1d20+5) - (1d4)
+            2d20+5+d4   -> (2d20+5) + (1d4)
+            etc.
+
+        Check the description of this module (e.g. help(__import__('dice')) )
+        for a full breakdown of the grammar and more examples.
+        """
         return Parser(formula).dice()
 
     def add_die(self, die: Die, *, subtracted: bool = False) -> None:
@@ -158,7 +187,7 @@ class Lexer:
         die     : integer? DELIM integer ((PLUS|MINUS) integer)*
         integer : DIGIT+
 
-        DIGIT   : [0-9]+
+        DIGIT   : [0-9]
         DELIM   : "d"
         PLUS    : "+"
         MINUS   : "-"
@@ -220,7 +249,7 @@ class Parser:
         die     : integer? DELIM integer ((PLUS|MINUS) integer)*
         integer : DIGIT+
 
-        DIGIT   : [0-9]+
+        DIGIT   : [0-9]
         DELIM   : "d"
         PLUS    : "+"
         MINUS   : "-"
@@ -283,7 +312,7 @@ class Parser:
         die     : integer? DELIM integer ((PLUS|MINUS) integer)?
         integer : DIGIT+
 
-        DIGIT   : [0-9]+
+        DIGIT   : [0-9]
         DELIM   : "d"
         PLUS    : "+"
         MINUS   : "-"
