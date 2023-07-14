@@ -347,14 +347,14 @@ def main():
 
     while True:
         text = input('dice> ')
-        if text.strip() in ('q', 'Q'):
+        if text.strip().lower() in ('q', 'quit', 'quit()', 'exit'):
             break
         if not text or not text.strip():
             continue
 
         bag = DiceBag.from_str(text)
         print(f"\tRolled {bag}")
-        print(f"\tGot {bag.roll()}")
+        print(f"\t= {bag.roll()}")
 
 
 if __name__ == '__main__':
